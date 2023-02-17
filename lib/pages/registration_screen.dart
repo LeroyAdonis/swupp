@@ -3,9 +3,13 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:regexed_validator/regexed_validator.dart';
+import 'package:swupp/models/user.dart';
 import 'package:swupp/pages/page_builder.dart';
 import 'package:swupp/pages/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:swupp/services/auth.dart';
+import 'package:swupp/models/user.dart' as firebaseUser;
+import 'package:swupp/services/database.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -23,11 +27,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController locationController = TextEditingController();
 
-  late String _name;
-  late String _lastName;
-  late String _location;
-  late String _email;
-  late String _password;
+  // late String _fullName;
+  // late String _lastName;
+  // late String _location;
+  String fullName = '';
+  String email = '';
+  String password = '';
+  String location = '';
 
   bool isValidEmail(String em) {
     String p = r'^[^@]+@[^@]+\.[^@]+';
@@ -39,6 +45,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   bool _isLoading = false;
 
+  final AuthService _auth = AuthService();
+  final firebaseUser.User? user = firebaseUser.User();
+  final DatabaseService data = DatabaseService();
+
   Future<void> _submit() async {
     setState(() {
       _isLoading = true;
@@ -47,7 +57,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       if (_formKey.currentState!.validate()) {
         _formKey.currentState?.save();
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: _email.trim(), password: _password.trim());
+            email: email.trim(), password: password.trim());
         // Perform register here
         addUserDetails();
 
@@ -69,10 +79,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   Future addUserDetails() async {
     await FirebaseFirestore.instance.collection('users').add({
-      'first name': _name,
-      'last name': _lastName,
-      'email': _email,
-      'location': _location,
+      'first name': fullName,
+      // 'last name': _lastName,
+      'email': email,
+      'location': location,
     });
   }
 
@@ -123,11 +133,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   padding: const EdgeInsets.all(10.0),
                   child: Container(
                     child: TextFormField(
+                      onChanged: ((value) {
+                        setState(() => fullName = value);
+                      }),
                       controller: nameController,
                       decoration: InputDecoration(
                         prefixIcon: Icon(Icons.person),
                         border: OutlineInputBorder(),
-                        hintText: 'Name',
+                        hintText: 'Full Name',
                         hintStyle: TextStyle(color: Colors.grey.shade400),
                         filled: true,
                         fillColor: Colors.white,
@@ -137,45 +150,48 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           setState(() {
                             _isLoading = false;
                           });
-                          return 'Please enter your name';
+                          return 'Please enter your full name';
                         }
                         return null;
                       },
-                      onSaved: (input) => _name = input!,
+                      onSaved: (input) => fullName = input!,
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Container(
-                    child: TextFormField(
-                      controller: lastNameController,
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.person),
-                        border: OutlineInputBorder(),
-                        hintText: 'Last name',
-                        hintStyle: TextStyle(color: Colors.grey.shade400),
-                        filled: true,
-                        fillColor: Colors.white,
-                      ),
-                      validator: (input) {
-                        if (input!.isEmpty) {
-                          setState(() {
-                            _isLoading = false;
-                          });
-                          return 'Please enter your last name';
-                        }
-                        return null;
-                      },
-                      onSaved: (input) => _lastName = input!,
-                    ),
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.all(10.0),
+                //   child: Container(
+                //     child: TextFormField(
+                //       controller: lastNameController,
+                //       decoration: InputDecoration(
+                //         prefixIcon: Icon(Icons.person),
+                //         border: OutlineInputBorder(),
+                //         hintText: 'Last name',
+                //         hintStyle: TextStyle(color: Colors.grey.shade400),
+                //         filled: true,
+                //         fillColor: Colors.white,
+                //       ),
+                //       validator: (input) {
+                //         if (input!.isEmpty) {
+                //           setState(() {
+                //             _isLoading = false;
+                //           });
+                //           return 'Please enter your last name';
+                //         }
+                //         return null;
+                //       },
+                //       onSaved: (input) => _lastName = input!,
+                //     ),
+                //   ),
+                // ),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Container(
                     child: TextFormField(
                       controller: emailController,
+                      onChanged: ((value) {
+                        setState(() => email = value);
+                      }),
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.email_outlined),
                         border: const OutlineInputBorder(),
@@ -199,7 +215,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         }
                         return null;
                       },
-                      onSaved: (input) => _email = input!,
+                      onSaved: (input) => email = input!,
                     ),
                   ),
                 ),
@@ -208,6 +224,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   child: Container(
                     child: TextFormField(
                       controller: passwordController,
+                      onChanged: ((value) {
+                        setState(() => password = value);
+                      }),
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.lock),
                         border: const OutlineInputBorder(),
@@ -226,7 +245,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         }
                         return null;
                       },
-                      onSaved: (input) => _password = input!,
+                      onSaved: (input) => password = input!,
                     ),
                   ),
                 ),
@@ -235,6 +254,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   child: Container(
                     child: TextFormField(
                       controller: locationController,
+                      onChanged: ((value) {
+                        setState(() => location = value);
+                      }),
                       decoration: InputDecoration(
                         prefixIcon: Icon(Icons.location_pin),
                         border: OutlineInputBorder(),
@@ -252,7 +274,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         }
                         return null;
                       },
-                      onSaved: (input) => _location = input!,
+                      onSaved: (input) => location = input!,
                     ),
                   ),
                 ),
@@ -266,7 +288,25 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size.fromHeight(50),
                     ),
-                    onPressed: _isLoading ? null : _submit,
+                    onPressed: (() async {
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      if (_formKey.currentState!.validate()) {
+                        dynamic result = await _auth
+                            .registerWithEmailAndPassword(email, password);
+                        // ignore: use_build_context_synchronously
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const PageBuilder(),
+                          ),
+                        );
+                      } else {
+                        _isLoading;
+                        return;
+                      }
+                    }),
                     child: _isLoading
                         ? const CircularProgressIndicator()
                         : const Text('Register'),

@@ -1,11 +1,15 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:swupp/components/menu_list_tile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:swupp/pages/home_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:swupp/pages/userList.dart';
 import 'package:swupp/read%20data/get_user_name.dart';
+import 'package:swupp/services/database.dart';
+import 'package:swupp/models/user_data.dart';
 
 import 'custom_drawer_header.dart';
 
@@ -60,40 +64,40 @@ class _MyDrawerState extends State<MyDrawer> {
   User? _user;
 
   // ignore: prefer_typing_uninitialized_variables
-  Map<String, dynamic>? _userData;
+  // Map<String, dynamic>? _userData;
 
   final _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
-    _getCurrentUser();
+    // _getCurrentUser();
     super.initState();
     // getUser();
   }
 
-  void _getCurrentUser() async {
-    try {
-      final user = _auth.currentUser;
-      setState(() {
-        _user = user;
-        getDocId();
-      });
+  // void _getCurrentUser() async {
+  //   try {
+  //     final user = _auth.currentUser;
+  //     setState(() {
+  //       _user = user;
+  //       getDocId();
+  //     });
 
-      if (_user != null) {
-        DocumentSnapshot userData = await FirebaseFirestore.instance
-            .collection("users")
-            .doc(_user?.uid)
-            .get();
-        print(_userData);
+  //     if (_user != null) {
+  //       DocumentSnapshot userData = await FirebaseFirestore.instance
+  //           .collection("users")
+  //           .doc(_user?.uid)
+  //           .get();
+  //       print(_userData);
 
-        setState(() {
-          _userData = (userData.data() as Map<String, dynamic>?);
-        });
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
+  //       setState(() {
+  //         _userData = (userData.data() as Map<String, dynamic>?);
+  //       });
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
   // void userStream() async {
   //   await for (var snapShot in _firestore.collection('users').snapshots()) {
@@ -159,41 +163,7 @@ class _MyDrawerState extends State<MyDrawer> {
           // ),
           DrawerHeader(
             decoration: BoxDecoration(color: Colors.blue),
-            child: _userData != null
-                ? Column(
-                    children: [
-                      Container(
-                        height: 80,
-                        width: 80,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            image: NetworkImage(
-                                _userData!['https://picsum.photos/400']),
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        _userData!['first name'],
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                        ),
-                      ),
-                      SizedBox(height: 5),
-                      Text(
-                        _user!.email.toString(),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ],
-                  )
-                : Container(),
+            child: Container(),
           ),
           MenuListTile(
             icon: Icons.message,

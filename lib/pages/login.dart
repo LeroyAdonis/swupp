@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:regexed_validator/regexed_validator.dart';
 import 'package:swupp/pages/registration_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:swupp/services/auth.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -16,32 +17,37 @@ class _LoginState extends State<Login> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  late String _email, _password;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  String email = '';
+  String password = '';
 
   bool _isLoading = false;
 
-  Future<void> _submit() async {
-    setState(() {
-      _isLoading = true;
-    });
-    try {
-      if (_formKey.currentState!.validate()) {
-        _formKey.currentState?.save();
-        await FirebaseAuth.instance
-            .signInWithEmailAndPassword(email: _email, password: _password);
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    } on FirebaseAuthException catch (e) {
-      if (e.message ==
-          'The password is invalid or the user does not have a password.') {
-        openDialog();
-      } else if (e.email == null) {
-        openEmailErrorDialog();
-      }
-    }
-  }
+  final AuthService _auth = AuthService();
+
+  // Future<void> _submit() async {
+  //   setState(() {
+  //     _isLoading = true;
+  //   });
+  //   try {
+  //     if (_formKey.currentState!.validate()) {
+  //       _formKey.currentState?.save();
+  //       await FirebaseAuth.instance
+  //           .signInWithEmailAndPassword(email: _email, password: _password);
+  //       setState(() {
+  //         _isLoading = false;
+  //       });
+  //     }
+  //   } on FirebaseAuthException catch (e) {
+  //     if (e.message ==
+  //         'The password is invalid or the user does not have a password.') {
+  //       openDialog();
+  //     } else if (e.email == null) {
+  //       openEmailErrorDialog();
+  //     }
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -54,6 +60,7 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        key: _scaffoldKey,
         backgroundColor: const Color.fromRGBO(244, 247, 252, 1),
         // appBar: AppBar(
         //   title: const Text("Swupppp"),
@@ -85,6 +92,9 @@ class _LoginState extends State<Login> {
                     padding: const EdgeInsets.all(10),
                     child: TextFormField(
                       controller: emailController,
+                      onChanged: ((value) {
+                        setState(() => email = value);
+                      }),
                       validator: (input) {
                         if (input!.isEmpty) {
                           setState(() {
@@ -108,26 +118,29 @@ class _LoginState extends State<Login> {
                         filled: true,
                         fillColor: Colors.white,
                       ),
-                      onSaved: (input) => _email = input!,
+                      // onSaved: (input) => _email = input!,
                     ),
                   ),
                   Container(
                     padding: const EdgeInsets.all(10),
                     child: TextFormField(
                       controller: passwordController,
+                      onChanged: ((value) {
+                        setState(() => password = value);
+                      }),
                       validator: (input) {
                         if (input!.length < 6) {
                           setState(() {
                             _isLoading = false;
                           });
-                          return 'Password must have 6 characters';
+                          return 'Password must have 6+ chars';
                         }
-                        if (!validator.password(input)) {
-                          setState(() {
-                            _isLoading = false;
-                          });
-                          return 'Password must at least contain one letter and one number';
-                        }
+                        // if (!validator.password(input)) {
+                        //   setState(() {
+                        //     _isLoading = false;
+                        //   });
+                        //   return 'Password must contain 1 Caps letter, 1 num';
+                        // }
                         return null;
                       },
                       decoration: InputDecoration(
@@ -138,7 +151,7 @@ class _LoginState extends State<Login> {
                         filled: true,
                         fillColor: Colors.white,
                       ),
-                      onSaved: (input) => _password = input!,
+                      // onSaved: (input) => _password = input!,
                       obscureText: true,
                     ),
                   ),
@@ -158,7 +171,28 @@ class _LoginState extends State<Login> {
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size.fromHeight(50),
                       ),
-                      onPressed: _isLoading ? null : _submit,
+                      onPressed: (() async {
+                        setState(() {
+                          _isLoading = true;
+                        });
+                        try {
+                          if (_formKey.currentState!.validate()) {
+                            await _auth.signInWithEmailAndPassword(
+                                email, password);
+                            setState(() {
+                              _isLoading = false;
+                            });
+                          }
+                        } on FirebaseAuthException catch (e) {
+                          setState(() {
+                            _isLoading = false;
+                          });
+                          // print(e.toString());
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(e.message.toString())),
+                          );
+                        }
+                      }),
                       child: _isLoading
                           ? const CircularProgressIndicator()
                           : const Text('Login'),

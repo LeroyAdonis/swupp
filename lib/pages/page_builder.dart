@@ -23,7 +23,9 @@ class _PageBuilderState extends State<PageBuilder> {
   int index = 0;
 
   final pages = <Widget>[
-    HomePage(documentId: '',),
+    HomePage(
+      documentId: '',
+    ),
     ItemsDetailsPage(),
     PopularProducts(
       image: Image.asset('/lib/images/swupp-logo-500x500-transparent.png')
