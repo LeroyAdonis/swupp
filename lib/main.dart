@@ -25,10 +25,10 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
-          textTheme: GoogleFonts.openSansTextTheme(
-            Theme.of(context).textTheme,
-          ),
-        ),
+            textTheme: GoogleFonts.montserratTextTheme(
+              Theme.of(context).textTheme,
+            ),
+            primaryColor: Color(0xff62cdf6)),
         routes: {
           ItemsDetailsPage.routName: (context) => const ItemsDetailsPage()
         },

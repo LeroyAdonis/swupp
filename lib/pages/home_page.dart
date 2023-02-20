@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    inputData();
+    // inputData();
     super.initState();
     // getData();
     setState(() {
@@ -77,9 +77,7 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 IconButton(
-                  onPressed: () {
-                    inputData();
-                  },
+                  onPressed: () {},
                   icon: const Icon(Icons.search),
                 ),
                 IconButton(

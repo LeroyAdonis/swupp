@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:swupp/models/user.dart' as firebaseUser;
 import 'package:swupp/services/database.dart';
+import 'package:swupp/pages/login.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -32,6 +33,9 @@ class AuthService {
       print(user);
       return _userFromFirebaseUser(user!);
     } on FirebaseAuthException catch (e) {
+      if (e.message ==
+          'The password is invalid or the user does not have a password.') {
+      }
       print(e.toString());
     }
   }

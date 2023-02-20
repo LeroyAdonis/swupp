@@ -11,6 +11,7 @@ import 'package:swupp/read%20data/get_user_name.dart';
 import 'package:swupp/services/database.dart';
 import 'package:swupp/models/user_data.dart';
 
+import '../pages/main_page.dart';
 import 'custom_drawer_header.dart';
 
 final _firestore = FirebaseFirestore.instance;
@@ -176,6 +177,8 @@ class _MyDrawerState extends State<MyDrawer> {
             text: 'SIGN OUT',
             onTap: () async {
               await FirebaseAuth.instance.signOut();
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: ((context) => MainPage())));
             },
           ),
         ],

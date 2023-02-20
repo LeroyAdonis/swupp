@@ -56,11 +56,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     try {
       if (_formKey.currentState!.validate()) {
         _formKey.currentState?.save();
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: email.trim(), password: password.trim());
-        // Perform register here
-        addUserDetails();
+        // await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        //     email: email.trim(), password: password.trim());
+        // // Perform register here
+        // addUserDetails();
 
+        await _auth.registerWithEmailAndPassword(email, password);
+        setState(() {
+          _isLoading = true;
+        });
         // ignore: use_build_context_synchronously
         Navigator.push(
           context,
@@ -68,9 +72,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             builder: (context) => const PageBuilder(),
           ),
         );
-        setState(() {
-          _isLoading = false;
-        });
       }
     } catch (e) {
       print(e);
@@ -98,241 +99,247 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(
-      //   title: Text('Registration'),
-      // ),
-      body: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Column(
-              children: <Widget>[
-                // Center(
-                //   child: Image.asset(
-                //     "lib/images/swupp-logo-500x500-transparent.png",
-                //     width: 250,
-                //   ),
-                // ),
-                SizedBox(
-                  height: 25,
-                ),
-                Text(
-                  'Welcome!',
-                  style: TextStyle(fontSize: 40),
-                ),
-                Text(
-                  'Please enter your details below',
-                  style: TextStyle(fontSize: 30),
-                ),
-                const SizedBox(
-                  height: 10.0,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Container(
-                    child: TextFormField(
-                      onChanged: ((value) {
-                        setState(() => fullName = value);
-                      }),
-                      controller: nameController,
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.person),
-                        border: OutlineInputBorder(),
-                        hintText: 'Full Name',
-                        hintStyle: TextStyle(color: Colors.grey.shade400),
-                        filled: true,
-                        fillColor: Colors.white,
-                      ),
-                      validator: (input) {
-                        if (input!.isEmpty) {
-                          setState(() {
-                            _isLoading = false;
-                          });
-                          return 'Please enter your full name';
-                        }
-                        return null;
-                      },
-                      onSaved: (input) => fullName = input!,
-                    ),
-                  ),
-                ),
-                // Padding(
-                //   padding: const EdgeInsets.all(10.0),
-                //   child: Container(
-                //     child: TextFormField(
-                //       controller: lastNameController,
-                //       decoration: InputDecoration(
-                //         prefixIcon: Icon(Icons.person),
-                //         border: OutlineInputBorder(),
-                //         hintText: 'Last name',
-                //         hintStyle: TextStyle(color: Colors.grey.shade400),
-                //         filled: true,
-                //         fillColor: Colors.white,
-                //       ),
-                //       validator: (input) {
-                //         if (input!.isEmpty) {
-                //           setState(() {
-                //             _isLoading = false;
-                //           });
-                //           return 'Please enter your last name';
-                //         }
-                //         return null;
-                //       },
-                //       onSaved: (input) => _lastName = input!,
-                //     ),
-                //   ),
-                // ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Container(
-                    child: TextFormField(
-                      controller: emailController,
-                      onChanged: ((value) {
-                        setState(() => email = value);
-                      }),
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.email_outlined),
-                        border: const OutlineInputBorder(),
-                        hintText: 'Email',
-                        hintStyle: TextStyle(color: Colors.grey.shade400),
-                        filled: true,
-                        fillColor: Colors.white,
-                      ),
-                      validator: (input) {
-                        if (input!.isEmpty) {
-                          setState(() {
-                            _isLoading = false;
-                          });
-                          return 'Please enter your email';
-                        }
-                        if (!validator.email(input)) {
-                          setState(() {
-                            _isLoading = false;
-                          });
-                          return 'Provide a valid email address';
-                        }
-                        return null;
-                      },
-                      onSaved: (input) => email = input!,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Container(
-                    child: TextFormField(
-                      controller: passwordController,
-                      onChanged: ((value) {
-                        setState(() => password = value);
-                      }),
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.lock),
-                        border: const OutlineInputBorder(),
-                        hintText: 'Password',
-                        hintStyle: TextStyle(color: Colors.grey.shade400),
-                        filled: true,
-                        fillColor: Colors.white,
-                      ),
-                      obscureText: true,
-                      validator: (input) {
-                        if (input!.isEmpty) {
-                          setState(() {
-                            _isLoading = false;
-                          });
-                          return 'Please enter your password';
-                        }
-                        return null;
-                      },
-                      onSaved: (input) => password = input!,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Container(
-                    child: TextFormField(
-                      controller: locationController,
-                      onChanged: ((value) {
-                        setState(() => location = value);
-                      }),
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.location_pin),
-                        border: OutlineInputBorder(),
-                        hintText: 'Location',
-                        hintStyle: TextStyle(color: Colors.grey.shade400),
-                        filled: true,
-                        fillColor: Colors.white,
-                      ),
-                      validator: (input) {
-                        if (input!.isEmpty) {
-                          setState(() {
-                            _isLoading = false;
-                          });
-                          return 'Please enter your location';
-                        }
-                        return null;
-                      },
-                      onSaved: (input) => location = input!,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  height: 50,
-                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(50),
-                    ),
-                    onPressed: (() async {
-                      setState(() {
-                        _isLoading = true;
-                      });
-                      if (_formKey.currentState!.validate()) {
-                        dynamic result = await _auth
-                            .registerWithEmailAndPassword(email, password);
-                        // ignore: use_build_context_synchronously
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const PageBuilder(),
+    return Center(
+      child: _isLoading
+          ? const CircularProgressIndicator(
+              backgroundColor: Color.fromRGBO(244, 247, 252, 1),
+            )
+          : Scaffold(
+              backgroundColor: Color.fromRGBO(244, 247, 252, 1),
+              // appBar: AppBar(
+              //   title: Text('Registration'),
+              // ),
+              body: SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Column(
+                      children: <Widget>[
+                        // Center(
+                        //   child: Image.asset(
+                        //     "lib/images/swupp-logo-500x500-transparent.png",
+                        //     width: 250,
+                        //   ),
+                        // ),
+                        SizedBox(
+                          height: 25,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "lib/images/sign_up.png",
+                              fit: BoxFit.contain,
+                            ),
+                            Text(
+                              'Sign up here!',
+                              style: TextStyle(
+                                  fontSize: 30, fontWeight: FontWeight.w500),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(
+                          height: 10.0,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Container(
+                            child: TextFormField(
+                              onChanged: ((value) {
+                                setState(() => fullName = value);
+                              }),
+                              controller: nameController,
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.person),
+                                border: OutlineInputBorder(),
+                                hintText: 'Full Name',
+                                hintStyle:
+                                    TextStyle(color: Colors.grey.shade400),
+                                filled: true,
+                                fillColor: Colors.white,
+                              ),
+                              validator: (input) {
+                                if (input!.isEmpty) {
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  return 'Please enter your full name';
+                                }
+                                return null;
+                              },
+                              onSaved: (input) => fullName = input!,
+                            ),
                           ),
-                        );
-                      } else {
-                        _isLoading;
-                        return;
-                      }
-                    }),
-                    child: _isLoading
-                        ? const CircularProgressIndicator()
-                        : const Text('Register'),
+                        ),
+                        // Padding(
+                        //   padding: const EdgeInsets.all(10.0),
+                        //   child: Container(
+                        //     child: TextFormField(
+                        //       controller: lastNameController,
+                        //       decoration: InputDecoration(
+                        //         prefixIcon: Icon(Icons.person),
+                        //         border: OutlineInputBorder(),
+                        //         hintText: 'Last name',
+                        //         hintStyle: TextStyle(color: Colors.grey.shade400),
+                        //         filled: true,
+                        //         fillColor: Colors.white,
+                        //       ),
+                        //       validator: (input) {
+                        //         if (input!.isEmpty) {
+                        //           setState(() {
+                        //             _isLoading = false;
+                        //           });
+                        //           return 'Please enter your last name';
+                        //         }
+                        //         return null;
+                        //       },
+                        //       onSaved: (input) => _lastName = input!,
+                        //     ),
+                        //   ),
+                        // ),
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Container(
+                            child: TextFormField(
+                              controller: emailController,
+                              onChanged: ((value) {
+                                setState(() => email = value);
+                              }),
+                              decoration: InputDecoration(
+                                prefixIcon: const Icon(Icons.email_outlined),
+                                border: const OutlineInputBorder(),
+                                hintText: 'Email',
+                                hintStyle:
+                                    TextStyle(color: Colors.grey.shade400),
+                                filled: true,
+                                fillColor: Colors.white,
+                              ),
+                              validator: (input) {
+                                if (input!.isEmpty) {
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  return 'Please enter your email';
+                                }
+                                if (!validator.email(input)) {
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  return 'Provide a valid email address';
+                                }
+                                return null;
+                              },
+                              onSaved: (input) => email = input!,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Container(
+                            child: TextFormField(
+                              controller: passwordController,
+                              onChanged: ((value) {
+                                setState(() => password = value);
+                              }),
+                              decoration: InputDecoration(
+                                prefixIcon: const Icon(Icons.lock),
+                                border: const OutlineInputBorder(),
+                                hintText: 'Password',
+                                hintStyle:
+                                    TextStyle(color: Colors.grey.shade400),
+                                filled: true,
+                                fillColor: Colors.white,
+                              ),
+                              obscureText: true,
+                              validator: (input) {
+                                if (input!.isEmpty) {
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  return 'Please enter your password';
+                                }
+                                return null;
+                              },
+                              onSaved: (input) => password = input!,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Container(
+                            child: TextFormField(
+                              controller: locationController,
+                              onChanged: ((value) {
+                                setState(() => location = value);
+                              }),
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.location_pin),
+                                border: OutlineInputBorder(),
+                                hintText: 'Location',
+                                hintStyle:
+                                    TextStyle(color: Colors.grey.shade400),
+                                filled: true,
+                                fillColor: Colors.white,
+                              ),
+                              validator: (input) {
+                                if (input!.isEmpty) {
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  return 'Please enter your location';
+                                }
+                                return null;
+                              },
+                              onSaved: (input) => location = input!,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Container(
+                          height: 50,
+                          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xff62cdf6),
+                              minimumSize: const Size.fromHeight(50),
+                            ),
+                            onPressed: _submit,
+                            // onPressed: (() async {
+                            //   setState(() {
+                            //     _isLoading = true;
+                            //   });
+                            //   if (_formKey.currentState!.validate()) {
+                            //     dynamic result = await _auth
+                            //         .registerWithEmailAndPassword(email, password);
+                            //   }
+                            // }),
+                            child: _isLoading
+                                ? const CircularProgressIndicator()
+                                : const Text('Sign up'),
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("Already have an account?"),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('Sign in'),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("Already have an account?"),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const Login()),
-                        );
-                      },
-                      child: Text("Login"),
-                    ),
-                  ],
-                )
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 }
