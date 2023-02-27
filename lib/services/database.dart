@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:swupp/models/user_data.dart';
+import 'package:swupp/pages/users/user_data.dart';
 
 class DatabaseService {
   final String? uid;
@@ -10,11 +10,7 @@ class DatabaseService {
   final CollectionReference usersCollection =
       FirebaseFirestore.instance.collection('users');
 
-  Future updateUserData(
-    String fullName,
-    String email,
-    String location,
-  ) async {
+  Future updateUserData(String fullName, String email, String location) async {
     return await usersCollection.doc(uid).set({
       'full name': fullName,
       'email': email,

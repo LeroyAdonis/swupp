@@ -17,7 +17,7 @@ class CustomDrawerHeader extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.zero,
       child: DrawerHeader(
-          decoration: const BoxDecoration(),
+          decoration: const BoxDecoration(color: Color(0xff171815)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

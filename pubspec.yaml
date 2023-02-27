@@ -31,6 +31,7 @@ environment:
 dependencies:
   cupertino_icons: ^1.0.2
   eva_icons_flutter: ^3.1.0
+  firebase_storage: ^11.0.13
   flutter:
     sdk: flutter
   flutter_spinkit: ^5.1.0

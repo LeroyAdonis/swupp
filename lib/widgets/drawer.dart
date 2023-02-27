@@ -1,18 +1,15 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:swupp/components/menu_list_tile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:swupp/pages/home_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:swupp/pages/userList.dart';
-import 'package:swupp/read%20data/get_user_name.dart';
+import 'package:swupp/pages/users/userList.dart';
+import 'package:swupp/services/auth.dart';
 import 'package:swupp/services/database.dart';
-import 'package:swupp/models/user_data.dart';
+import 'package:swupp/widgets/custom_drawer_header.dart';
 
 import '../pages/main_page.dart';
-import 'custom_drawer_header.dart';
 
 final _firestore = FirebaseFirestore.instance;
 // FirebaseUser loggedInFirebaseUser;
@@ -40,6 +37,15 @@ class _MyDrawerState extends State<MyDrawer> {
   // void userStream() async {
   List<String> docIds = [];
 
+  bool userId = false;
+
+  void checkId() {
+    if (_auth.currentUser!.uid == DatabaseService().usersCollection.id) {
+      userId = true;
+      print(userId);
+    }
+  }
+
   Future getDocId() async {
     await _firestore.collection('users').get().then(
           (snapshot) => snapshot.docs.forEach(
@@ -65,7 +71,7 @@ class _MyDrawerState extends State<MyDrawer> {
   User? _user;
 
   // ignore: prefer_typing_uninitialized_variables
-  // Map<String, dynamic>? _userData;
+  Map<String, dynamic>? _userData;
 
   final _auth = FirebaseAuth.instance;
 
@@ -74,6 +80,9 @@ class _MyDrawerState extends State<MyDrawer> {
     // _getCurrentUser();
     super.initState();
     // getUser();
+    // checkId();
+    // print(DatabaseService().usersCollection.doc('user_id'));
+    // print(_auth.currentUser!.uid);
   }
 
   // void _getCurrentUser() async {
@@ -162,10 +171,16 @@ class _MyDrawerState extends State<MyDrawer> {
           //     },
           //   ),
           // ),
-          DrawerHeader(
-            decoration: BoxDecoration(color: Colors.blue),
-            child: Container(),
-          ),
+          // DrawerHeader(
+          //   decoration: BoxDecoration(
+          //     color: Color(0xFFF4F7FC),
+          //   ),
+          //   child: userId ? SizedBox() : Container(),
+          // ),
+          CustomDrawerHeader(
+              name: _auth.currentUser!.displayName.toString(),
+              email: _auth.currentUser!.email.toString(),
+              profileImageUrl: _auth.currentUser!.photoURL.toString()),
           MenuListTile(
             icon: Icons.message,
             text: 'NOTIFICATIONS',
@@ -178,7 +193,10 @@ class _MyDrawerState extends State<MyDrawer> {
             onTap: () async {
               await FirebaseAuth.instance.signOut();
               Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: ((context) => MainPage())));
+                MaterialPageRoute(
+                  builder: ((context) => MainPage()),
+                ),
+              );
             },
           ),
         ],

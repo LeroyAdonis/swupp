@@ -7,6 +7,8 @@ import 'package:swupp/pages/main_page.dart';
 import 'package:swupp/pages/registration_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
+import 'package:swupp/pages/users/userList.dart';
+import 'package:swupp/pages/users/user_data.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,8 +21,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => TradeItemCardDetails(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => TradeItemCardDetails(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => UserData(
+            email: "",
+            fullName: "",
+            location: "",
+          ),
+        ),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
