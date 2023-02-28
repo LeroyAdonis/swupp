@@ -49,8 +49,8 @@ class _HomePageState extends State<HomePage> {
     final User? user = auth.currentUser;
 
     // here you write the codes to input the data into firestore
-    MyDrawer.userEmail.value = user!.email!;
-    MyDrawer.userName.value = user.uid;
+    // MyDrawer.userEmail.value = user!.email!;
+    // MyDrawer.userName.value = user.uid;
   }
 
   @override

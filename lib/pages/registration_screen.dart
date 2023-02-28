@@ -61,7 +61,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         // // Perform register here
         // addUserDetails();
 
-        await _auth.registerWithEmailAndPassword(email, password);
+        await _auth.registerWithEmailAndPassword(
+            fullName, email, password, location);
         setState(() {
           _isLoading = true;
         });

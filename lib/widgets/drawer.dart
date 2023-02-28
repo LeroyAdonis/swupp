@@ -1,9 +1,11 @@
-// ignore_for_file: prefer_const_constructors
-
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:swupp/components/menu_list_tile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:swupp/pages/profile/profile_screen.dart';
 import 'package:swupp/pages/users/userList.dart';
 import 'package:swupp/services/auth.dart';
 import 'package:swupp/services/database.dart';
@@ -23,9 +25,6 @@ class MyDrawer extends StatefulWidget {
     Key? key,
   }) : super(key: key);
 
-  static ValueNotifier<String> userEmail = ValueNotifier('');
-  static ValueNotifier<String> userName = ValueNotifier('');
-
   @override
   State<MyDrawer> createState() => _MyDrawerState();
 }
@@ -33,100 +32,40 @@ class MyDrawer extends StatefulWidget {
 class _MyDrawerState extends State<MyDrawer> {
   String? name = '';
   String? email = '';
-
-  // void userStream() async {
-  List<String> docIds = [];
-
-  bool userId = false;
-
-  void checkId() {
-    if (_auth.currentUser!.uid == DatabaseService().usersCollection.id) {
-      userId = true;
-      print(userId);
-    }
-  }
-
-  Future getDocId() async {
-    await _firestore.collection('users').get().then(
-          (snapshot) => snapshot.docs.forEach(
-            (document) {
-              docIds.add(document.reference.id);
-            },
-          ),
-        );
-    // await for (var snapShot in _firestore.collection('users').snapshots()) {
-    //   for (var user in snapShot.docs) {
-    //     print(user.data());
-    //   }
-    // }
-  }
-
-  // Future getUser() async {
-  //   await FirebaseFirestore.instance
-  //       .collection('users')
-  //       .where('email', isEqualTo: auth.currentUser)
-  //       .get();
-  // }
-
-  User? _user;
-
-  // ignore: prefer_typing_uninitialized_variables
-  Map<String, dynamic>? _userData;
+  String? profileImage = '';
+  bool imageUploaded = false;
 
   final _auth = FirebaseAuth.instance;
 
-  @override
-  void initState() {
-    // _getCurrentUser();
-    super.initState();
-    // getUser();
-    // checkId();
-    // print(DatabaseService().usersCollection.doc('user_id'));
-    // print(_auth.currentUser!.uid);
+  File? _image;
+  final picker = ImagePicker();
+
+  void chooseImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      _image = File(pickedFile!.path);
+    });
   }
 
-  // void _getCurrentUser() async {
-  //   try {
-  //     final user = _auth.currentUser;
-  //     setState(() {
-  //       _user = user;
-  //       getDocId();
-  //     });
+  void _uploadImage() async {
+    if (_image == null) return;
 
-  //     if (_user != null) {
-  //       DocumentSnapshot userData = await FirebaseFirestore.instance
-  //           .collection("users")
-  //           .doc(_user?.uid)
-  //           .get();
-  //       print(_userData);
+    final user = FirebaseAuth.instance.currentUser;
+    final storageRef = FirebaseStorage.instance
+        .ref()
+        .child('users/${user!.uid}/profile_pic.jpg');
+    final uploadTask = storageRef.putFile(_image!);
+    await uploadTask.whenComplete(() => null);
 
-  //       setState(() {
-  //         _userData = (userData.data() as Map<String, dynamic>?);
-  //       });
-  //     }
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
+    final downloadUrl = await storageRef.getDownloadURL();
 
-  // void userStream() async {
-  //   await for (var snapShot in _firestore.collection('users').snapshots()) {
-  //     for (var user in snapShot.docs) {
-  //       print(user.data());
-  //     }
-  //   }
-  // }
+    user.updatePhotoURL(downloadUrl);
 
-  // void getUser() async {
-  //   final snapshot = await FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc('user_id')
-  //       .get();
-  //   setState(() {
-  //     name = snapshot.data()!['first name'];
-  //     email = snapshot.data()!['email'];
-  //   });
-  // }
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .update({'profile_pic_url': downloadUrl});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -178,9 +117,27 @@ class _MyDrawerState extends State<MyDrawer> {
           //   child: userId ? SizedBox() : Container(),
           // ),
           CustomDrawerHeader(
-              name: _auth.currentUser!.displayName.toString(),
-              email: _auth.currentUser!.email.toString(),
-              profileImageUrl: _auth.currentUser!.photoURL.toString()),
+            name: _auth.currentUser!.displayName.toString(),
+            email: _auth.currentUser!.email.toString(),
+            profileImageUrl: imageUploaded
+                ? Image.file(_image!).toString()
+                : Image.asset(
+                    "/lib/images/swupp-logo.png",
+                    width: 30,
+                  ).toString(),
+          ),
+          MenuListTile(
+            icon: Icons.person,
+            text: 'PROFILE',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfilePage(),
+                ),
+              );
+            },
+          ),
           MenuListTile(
             icon: Icons.message,
             text: 'NOTIFICATIONS',
