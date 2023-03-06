@@ -74,48 +74,6 @@ class _MyDrawerState extends State<MyDrawer> {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          // UserAccountsDrawerHeader(
-          //   decoration: BoxDecoration(color: Colors.grey[900]),
-          //   currentAccountPicture: ClipOval(
-          //     child: Image.asset(
-          //       "lib/images/swupp-logo.png",
-          //     ),
-          //   ),
-          //   accountName: FutureBuilder(
-          //     future: getDocId(),
-          //     builder: ((context, snapshot) {
-          //       return ListView.builder(
-          //         itemCount: docIds.length,
-          //         itemBuilder: ((context, index) {
-          //           return ListTile(
-          //             textColor: Colors.white,
-          //             title: GetUserName(
-          //               documentId: docIds[index],
-          //             ),
-          //           );
-          //         }),
-          //       );
-          //     }),
-          //   ),
-          //   // accountName: ValueListenableBuilder(
-          //   //   valueListenable: MyDrawer.userName,
-          //   //   builder: (BuildContext context, String newValue, Widget? child) {
-          //   //     return const Text('');
-          //   //   },
-          //   // ),
-          //   accountEmail: ValueListenableBuilder(
-          //     valueListenable: MyDrawer.userEmail,
-          //     builder: (BuildContext context, String newValue, Widget? child) {
-          //       return Text(newValue);
-          //     },
-          //   ),
-          // ),
-          // DrawerHeader(
-          //   decoration: BoxDecoration(
-          //     color: Color(0xFFF4F7FC),
-          //   ),
-          //   child: userId ? SizedBox() : Container(),
-          // ),
           CustomDrawerHeader(
             name: _auth.currentUser!.displayName.toString(),
             email: _auth.currentUser!.email.toString(),
@@ -133,7 +91,10 @@ class _MyDrawerState extends State<MyDrawer> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ProfilePage(),
+                  builder: (context) => ProfilePage(
+                      email: email.toString(),
+                      name: name.toString(),
+                      profileImageUrl: _image.toString()),
                 ),
               );
             },

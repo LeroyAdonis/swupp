@@ -11,6 +11,7 @@ import 'package:swupp/pages/popular_products.dart';
 import 'package:swupp/pages/product_listings.dart';
 import 'package:swupp/pages/registration_screen.dart';
 import 'package:swupp/widgets/tabbar_material_widget.dart';
+import 'package:swupp/pages/products/list_of_products_screen.dart';
 
 class PageBuilder extends StatefulWidget {
   const PageBuilder({super.key});
@@ -26,7 +27,7 @@ class _PageBuilderState extends State<PageBuilder> {
     HomePage(
       documentId: '',
     ),
-    ItemsDetailsPage(),
+    ProductList(userId: ''),
     PopularProducts(
       image: Image.asset('/lib/images/swupp-logo-500x500-transparent.png')
           .toString(),
