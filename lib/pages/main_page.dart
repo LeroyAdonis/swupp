@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:swupp/pages/page_builder.dart';
-import 'package:swupp/pages/login.dart';
-import 'package:swupp/pages/registration_screen.dart';
+import 'package:swupp/pages/sign_in_screen.dart';
+import 'package:swupp/pages/sign_up_screen.dart';
 
 class MainPage extends StatelessWidget {
   const MainPage({Key? key}) : super(key: key);

@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:regexed_validator/regexed_validator.dart';
 import 'package:swupp/models/user.dart';
 import 'package:swupp/pages/page_builder.dart';
-import 'package:swupp/pages/login.dart';
+import 'package:swupp/pages/sign_in_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:swupp/services/auth.dart';
 import 'package:swupp/models/user.dart' as firebaseUser;

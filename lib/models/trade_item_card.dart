@@ -29,96 +29,101 @@ class TradeItemCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
 
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Colors.white,
-        ),
-        child: Column(children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: GestureDetector(
-                  onTap: () =>
-                      Navigator.pushNamed(context, ItemsDetailsPage.routName,
-                          arguments: TradeItemCard(
-                            itemImage: itemImage,
-                            itemTitle: itemTitle,
-                            itemLocation: itemLocation,
-                            itemEstValue: itemEstValue,
-                            itemCategory: itemCategory,
-                            itemPostedTime: itemPostedTime,
-                          )),
-                  child: Image.network(
-                    itemImage,
-                    width: 500,
-                  ),
-                )),
+      child: Material(
+        elevation: 3.0,
+        borderRadius: BorderRadius.circular(5),
+        child: Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(10, 5, 0, 5),
-                child: Text(
-                  itemTitle,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w500,
+          child: Column(children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(5),
+                  child: GestureDetector(
+                    onTap: () =>
+                        Navigator.pushNamed(context, ItemsDetailsPage.routName,
+                            arguments: TradeItemCard(
+                              itemImage: itemImage,
+                              itemTitle: itemTitle,
+                              itemLocation: itemLocation,
+                              itemEstValue: itemEstValue,
+                              itemCategory: itemCategory,
+                              itemPostedTime: itemPostedTime,
+                            )),
+                    child: Image.network(
+                      itemImage,
+                      width: 500,
+                      height: 200,
+                      fit: BoxFit.fitWidth,
+                    ),
+                  )),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 5, 0, 5),
+                  child: Text(
+                    itemTitle,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textScaleFactor: 1.5,
                   ),
-                  textScaleFactor: 1.5,
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(5, 0, 0, 15),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.location_pin,
-                              color: Colors.grey,
-                            ),
-                            Text(
-                              itemLocation,
-                              style: const TextStyle(
-                                fontSize: 16,
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(5, 0, 0, 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.location_pin,
                                 color: Colors.grey,
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 15),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: const [
-                          Icon(
-                            EvaIcons.flip2Outline,
-                            color: Colors.grey,
-                          ),
-                          SizedBox(
-                            width: 15,
-                          ),
-                          Icon(
-                            EvaIcons.heartOutline,
-                            color: Colors.grey,
+                              Text(
+                                itemLocation,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.only(right: 15),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: const [
+                            Icon(
+                              EvaIcons.flip2Outline,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            Icon(
+                              EvaIcons.heartOutline,
+                              color: Colors.grey,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ]),
+              ],
+            ),
+          ]),
+        ),
       ),
 
       // child: Card(

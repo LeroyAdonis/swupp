@@ -111,7 +111,7 @@ class _CustomDrawerHeaderState extends State<CustomDrawerHeader> {
     return Padding(
       padding: EdgeInsets.zero,
       child: DrawerHeader(
-          decoration: const BoxDecoration(color: Color(0xff171815)),
+          decoration: const BoxDecoration(color: Color(0xff62cdf6)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

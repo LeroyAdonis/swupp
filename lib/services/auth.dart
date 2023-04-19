@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:swupp/models/user.dart' as firebaseUser;
 import 'package:swupp/services/database.dart';
-import 'package:swupp/pages/login.dart';
+import 'package:swupp/pages/sign_in_screen.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;

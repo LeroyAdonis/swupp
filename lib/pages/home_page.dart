@@ -12,9 +12,9 @@ import '../models/trade_item_card_details.dart';
 // import 'package:swupp/api/unsplash_api.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key, required this.documentId}) : super(key: key);
-
-  final String documentId;
+  const HomePage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -27,16 +27,6 @@ class _HomePageState extends State<HomePage> {
 
   bool _isLoading = false;
 
-  // Future getDocID() async {
-  //   await FirebaseFirestore.instance.collection('users').get().then(
-  //         (snapshot) => snapshot.docs.forEach(
-  //           (document) {
-  //             print(document.reference);
-  //             docIDs.add(document.reference.id);
-  //           },
-  //         ),
-  //       );
-  // }
 
   Future getDocID() async {
     await FirebaseFirestore.instance
@@ -68,7 +58,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(244, 247, 252, 1),
       appBar: AppBar(
-        backgroundColor: Colors.grey[900],
+        backgroundColor: const Color(0xff62cdf6),
         title: const Text('Browse Trades'),
         actions: [
           Padding(

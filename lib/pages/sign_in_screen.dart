@@ -2,7 +2,7 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:regexed_validator/regexed_validator.dart';
-import 'package:swupp/pages/registration_screen.dart';
+import 'package:swupp/pages/sign_up_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:swupp/services/auth.dart';
 
@@ -71,7 +71,10 @@ class _LoginState extends State<Login> {
     return SafeArea(
       child: Center(
         child: _isLoading
-            ? const CircularProgressIndicator()
+            ? const CircularProgressIndicator(
+                backgroundColor: Color.fromRGBO(244, 247, 252, 1),
+                color: Color(0xff62cdf6),
+              )
             : Scaffold(
                 key: _scaffoldKey,
                 backgroundColor: const Color.fromRGBO(244, 247, 252, 1),
@@ -111,6 +114,7 @@ class _LoginState extends State<Login> {
                           Container(
                             padding: const EdgeInsets.all(10),
                             child: TextFormField(
+                              
                               controller: emailController,
                               onChanged: ((value) {
                                 setState(() => email = value);
@@ -221,7 +225,9 @@ class _LoginState extends State<Login> {
                                   : const Text('Sign in'),
                             ),
                           ),
-                          const SizedBox(height: 10,),
+                          const SizedBox(
+                            height: 10,
+                          ),
                           Text(
                             SignIneError,
                             style: const TextStyle(color: Colors.red),
