@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -24,6 +25,7 @@ class CustomDrawerHeader extends StatefulWidget {
 
 class _CustomDrawerHeaderState extends State<CustomDrawerHeader> {
   bool imageUploaded = false;
+  bool uploadingImage = false;
 
   File? _image;
 
@@ -36,41 +38,54 @@ class _CustomDrawerHeaderState extends State<CustomDrawerHeader> {
   _CustomDrawerHeaderState({this.radius = 40});
 
   void _chooseImage() async {
-    final pickedFile = await picker.pickImage(
-      source: ImageSource.camera,
-      maxWidth: 80,
-      maxHeight: 80,
-      imageQuality: 100,
-    );
-    setState(() {
-      _image = File(pickedFile!.path);
-      imageUploaded = true;
-    });
+    if (!imageUploaded) {
+      final pickedFile = await picker.pickImage(
+        source: ImageSource.camera,
+        // maxWidth: 80,
+        // maxHeight: 80,
+        imageQuality: 100,
+      );
+      setState(() {
+        _image = File(pickedFile!.path);
+        imageUploaded = true;
+        _profilePicUrl = null; // reset the profile pic URL
+      });
 
-    if (_image == null) return;
+      if (_image == null) return;
 
-    final user = FirebaseAuth.instance.currentUser;
-    final storageRef = FirebaseStorage.instance
-        .ref()
-        .child('users/${user!.uid}/profile_pic.jpg');
-    final uploadTask = storageRef.putFile(_image!);
-    await uploadTask.whenComplete(() => null);
+      setState(() {
+        uploadingImage = true;
+      });
 
-    final downloadUrl = await storageRef.getDownloadURL();
+      final user = FirebaseAuth.instance.currentUser;
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('users/${user!.uid}/profile_pic.jpg');
+      // Delete the previous image
+      final prevImage = await storageRef.getDownloadURL().catchError((_) {});
+      if (prevImage != null) {
+        await FirebaseStorage.instance.refFromURL(prevImage).delete();
+      }
+      final uploadTask = storageRef.putFile(_image!);
+      await uploadTask.whenComplete(() => null);
 
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('profile_pic_url', downloadUrl);
+      final downloadUrl = await storageRef.getDownloadURL();
 
-    setState(() {
-      _profilePicUrl = downloadUrl;
-    });
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('profile_pic_url', downloadUrl);
 
-    user.updatePhotoURL(downloadUrl);
+      setState(() {
+        _profilePicUrl = downloadUrl;
+        uploadingImage = false;
+      });
 
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .update({'profile_pic_url': downloadUrl});
+      user.updatePhotoURL(downloadUrl);
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .update({'profile_pic_url': downloadUrl});
+    }
   }
 
   @override
@@ -115,26 +130,43 @@ class _CustomDrawerHeaderState extends State<CustomDrawerHeader> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (_profilePicUrl != null)
-                CircleAvatar(
-                  radius: radius,
-                  backgroundImage: NetworkImage(_profilePicUrl!),
-                )
-              else if (_image != null)
-                CircleAvatar(
-                  radius: radius,
-                  backgroundImage: FileImage(_image!),
-                )
-              else
-                GestureDetector(
-                  onTap: (() {
-                    _chooseImage();
-                  }),
-                  child: CircleAvatar(
-                    radius: radius,
-                    child: const Center(child: Icon(Icons.camera_alt_outlined)),
-                  ),
-                ),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  if (_profilePicUrl != null)
+                    GestureDetector(
+                      onTap: (() {
+                        _chooseImage();
+                      }),
+                      child: CircleAvatar(
+                        radius: radius,
+                        backgroundImage:
+                            CachedNetworkImageProvider(_profilePicUrl!),
+                      ),
+                    )
+                  else if (_image != null)
+                    CircleAvatar(
+                      radius: radius,
+                      backgroundImage: FileImage(_image!),
+                    )
+                  else
+                    GestureDetector(
+                      onTap: (() {
+                        _chooseImage();
+                      }),
+                      child: CircleAvatar(
+                        radius: radius,
+                        child: const Center(
+                            child: Icon(Icons.camera_alt_outlined)),
+                      ),
+                    ),
+                  if (uploadingImage)
+                    CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                          Theme.of(context).primaryColor),
+                    ),
+                ],
+              ),
               Text(
                 widget.name,
                 style: const TextStyle(

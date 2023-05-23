@@ -33,7 +33,7 @@ class _MyDrawerState extends State<MyDrawer> {
   String? name = '';
   String? email = '';
   String? profileImage = '';
-  bool imageUploaded = false;
+  // bool imageUploaded = false;
 
   final _auth = FirebaseAuth.instance;
 
@@ -42,9 +42,9 @@ class _MyDrawerState extends State<MyDrawer> {
 
   void chooseImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      _image = File(pickedFile!.path);
-    });
+    // setState(() {
+    //   _image = File(pickedFile!.path);
+    // });
   }
 
   void _uploadImage() async {
@@ -77,12 +77,9 @@ class _MyDrawerState extends State<MyDrawer> {
           CustomDrawerHeader(
             name: _auth.currentUser!.displayName.toString(),
             email: _auth.currentUser!.email.toString(),
-            profileImageUrl: imageUploaded
-                ? Image.file(_image!).toString()
-                : Image.asset(
-                    "/lib/images/swupp-logo.png",
-                    width: 30,
-                  ).toString(),
+            profileImageUrl: _image != null
+                ? _image!.path
+                : const AssetImage("/lib/images/swupp-logo.png").assetName,
           ),
           MenuListTile(
             icon: Icons.person,

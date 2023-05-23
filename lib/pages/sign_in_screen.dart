@@ -6,6 +6,8 @@ import 'package:swupp/pages/sign_up_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:swupp/services/auth.dart';
 
+import 'forgot_password_screen.dart';
+
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
 
@@ -114,7 +116,6 @@ class _LoginState extends State<Login> {
                           Container(
                             padding: const EdgeInsets.all(10),
                             child: TextFormField(
-                              
                               controller: emailController,
                               onChanged: ((value) {
                                 setState(() => email = value);
@@ -183,8 +184,14 @@ class _LoginState extends State<Login> {
                           ),
                           TextButton(
                             onPressed: () {
-                              FirebaseAuth.instance.signOut();
+                              // FirebaseAuth.instance.signOut();
                               //forgot password screen
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ForgotPasswordScreen()),
+                              );
                             },
                             child: const Text(
                               'Forgot Password',

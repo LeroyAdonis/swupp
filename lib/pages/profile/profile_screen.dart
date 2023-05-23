@@ -118,7 +118,9 @@ class _ProfilePageState extends State<ProfilePage> {
           padding: const EdgeInsets.only(top: 25),
           child: Column(
             children: [
-              Row(children: [],),
+              Row(
+                children: [],
+              ),
               if (_profilePicUrl != null)
                 CircleAvatar(
                   radius: radius,
@@ -140,7 +142,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
               const SizedBox(height: 20),
-              Text('Logged in as: ${user!.displayName}', ),
+              Text(
+                'Logged in as: ${user!.displayName}',
+              ),
             ],
           ),
         ),
