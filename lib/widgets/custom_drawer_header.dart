@@ -39,8 +39,25 @@ class _CustomDrawerHeaderState extends State<CustomDrawerHeader> {
 
   void _chooseImage() async {
     if (!imageUploaded) {
+      final source = await showDialog<ImageSource>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Choose image source'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, ImageSource.camera),
+              child: Text('Camera'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, ImageSource.gallery),
+              child: Text('Gallery'),
+            ),
+          ],
+        ),
+      );
+      if (source == null) return;
       final pickedFile = await picker.pickImage(
-        source: ImageSource.camera,
+        source: source,
         // maxWidth: 80,
         // maxHeight: 80,
         imageQuality: 100,
@@ -133,27 +150,19 @@ class _CustomDrawerHeaderState extends State<CustomDrawerHeader> {
               Stack(
                 alignment: Alignment.center,
                 children: [
-                  if (_profilePicUrl != null)
+                  if (_image != null || _profilePicUrl != null)
                     GestureDetector(
-                      onTap: (() {
-                        _chooseImage();
-                      }),
+                      onTap: _chooseImage,
                       child: CircleAvatar(
                         radius: radius,
-                        backgroundImage:
-                            CachedNetworkImageProvider(_profilePicUrl!),
+                        backgroundImage: _image != null
+                            ? FileImage(_image!) as ImageProvider<Object>
+                            : NetworkImage(_profilePicUrl!),
                       ),
-                    )
-                  else if (_image != null)
-                    CircleAvatar(
-                      radius: radius,
-                      backgroundImage: FileImage(_image!),
                     )
                   else
                     GestureDetector(
-                      onTap: (() {
-                        _chooseImage();
-                      }),
+                      onTap: _chooseImage,
                       child: CircleAvatar(
                         radius: radius,
                         child: const Center(

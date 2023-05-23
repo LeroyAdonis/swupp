@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:swupp/components/menu_list_tile.dart';
 import 'package:swupp/widgets/drawer.dart';
 
@@ -26,7 +25,6 @@ class _HomePageState extends State<HomePage> {
   List<String> docIDs = [];
 
   bool _isLoading = false;
-
 
   Future getDocID() async {
     await FirebaseFirestore.instance

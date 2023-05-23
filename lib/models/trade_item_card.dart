@@ -1,6 +1,5 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 import 'package:swupp/pages/items_details_page.dart';
 
@@ -98,11 +97,11 @@ class TradeItemCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 15),
+                      const Padding(
+                        padding: EdgeInsets.only(right: 15),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
-                          children: const [
+                          children: [
                             Icon(
                               EvaIcons.flip2Outline,
                               color: Colors.grey,
